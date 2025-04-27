@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ミルクチョコ AI診断</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+            background-color: #f0f0f0;
+        }
+        .container {
+            text-align: center;
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+        .button {
+            padding: 10px 20px;
+            font-size: 16px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            margin-top: 20px;
+        }
+        .button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>ミルクチョコ AI診断</h1>
+        <p>ニックネームを入力してください</p>
+        <input type="text" id="nickname" placeholder="ニックネーム" />
+        <button class="button" onclick="startDiagnosis()">診断スタート</button>
+        <div id="result" style="display:none;">
+            <h2>診断結果:</h2>
+            <p id="heroName"></p>
+        </div>
+    </div>
+
+    <script>
+        const heroes = [
+            "アサルト", "ボマー", "ゴースト", "メディック", "エレキ", "シールド",
+            "チュチュ", "アイアン", "リーコン", "キャット", "ランチャー"
+        ];
+
+        const webhookURL = "https://discord.com/api/webhooks/1366016639841341481/L5I7WDD_xthFEHSPfnl9gHAkGpQUGbf542K2whGCHhqDJE2t5PVJeN8Jr4Hx-YDWI0Yt";
+
+        function startDiagnosis() {
+            const nickname = document.getElementById("nickname").value;
+            if (!nickname) {
+                alert("ニックネームを入力してください！");
+                return;
+            }
+
+            // ヒーロー名をランダムに選択
+            const heroName = heroes[Math.floor(Math.random() * heroes.length)];
+
+            // 結果を表示
+            document.getElementById("heroName").innerText = `${nickname}さんのヒーローは「${heroName}」です！`;
+            document.getElementById("result").style.display = "block";
+
+            // Webhookに送信するデータ
+            const payload = {
+                content: `${nickname}さんのヒーローは「${heroName}」です！`
+            };
+
+            // WebhookにPOSTリクエストを送信
+            fetch(webhookURL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify(payload)
+            })
+            .then(response => {
+                if (response.ok) {
+                    console.log('Webhookに送信されました！');
+                } else {
+                    console.error('Webhook送信に失敗しました。');
+                }
+            })
+            .catch(error => {
+                console.error('エラーが発生しました:', error);
+            });
+        }
+    </script>
+</body>
+</html>
